@@ -1,0 +1,10 @@
+fastapi==0.111.0
+pydantic==2.7.1
+sqlalchemy
+alembic
+psycopg2-binary
+fastapi-users[sqlalchemy]
+python-dotenv
+asyncpg
+websocket
+redis

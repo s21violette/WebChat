@@ -1,0 +1,66 @@
+from typing import List
+
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import insert, select
+
+from chat.models import Messages
+from database import async_session_maker, get_async_session
+
+router = APIRouter(
+    prefix="/chat",
+    tags=["Chat"]
+)
+
+
+class ConnectionManager:  # класс, хранящий активные вебсокет соединения, чтобы можно было с ними общаться
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):  # подключение нового пользователя
+        await websocket.accept()
+        self.active_connections.append(websocket)  # просто добавить его в список
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: str):
+        await self.add_messages_to_database(message)
+        for connection in self.active_connections:
+            await connection.send_text(message)
+
+    @staticmethod
+    async def send_personal_message(message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    @staticmethod
+    async def add_messages_to_database(message: str):
+        async with async_session_maker() as session:
+            stmt = insert(Messages).values(message=message)
+            await session.execute(stmt)
+            await session.commit()
+
+
+manager = ConnectionManager()
+
+
+@router.get("/last_messages")
+async def get_last_messages(
+        session: AsyncSession = Depends(get_async_session)
+):
+    query = select(Messages).order_by(Messages.id.desc())
+    messages = await session.execute(query)
+    return messages.scalars().all()
+
+
+@router.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: int):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await manager.broadcast(f"{client_id}: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"{client_id} left the chat")
