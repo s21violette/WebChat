@@ -8,3 +8,5 @@ python-dotenv
 asyncpg
 websocket
 redis
+aiohttp
+<img src="{{ url_for('static', path='night_chat.gif') }}">

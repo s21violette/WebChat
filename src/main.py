@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from fastapi_cache.backends.redis import RedisBackend
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_cache import FastAPICache
 
@@ -16,11 +17,23 @@ app = FastAPI(
     title="test"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+origins = [
+    "http://localhost:8000/chat/last_messages",
+]
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(
     fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/jwt",
+    prefix="/auth",
     tags=["Auth"],
 )
 
