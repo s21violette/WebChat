@@ -25,6 +25,7 @@ origins = [
     "http://localhost:8000/chat/last_messages",
 ]
 
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(

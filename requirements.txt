@@ -5,6 +5,3 @@ fastapi-users[sqlalchemy]
 fastapi~=0.111.0
 SQLAlchemy~=2.0.30
 pydantic~=2.7.1
-#python-jose[cryptography]
-#passlib[encrypt]
-#python-multipart

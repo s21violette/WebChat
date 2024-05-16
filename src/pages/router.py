@@ -12,3 +12,8 @@ templates = Jinja2Templates(directory="templates")
 @router.get("/chat")
 def get_chat_page(request: Request):
     return templates.TemplateResponse("chat.html", {"request": request})
+
+
+@router.get("/auth")
+def get_auth_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})

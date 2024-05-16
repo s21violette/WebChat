@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Create new profile</h2>
+    <form action="" onsubmit="createUser(event)">
+        <input type="text" placeholder="login" id="loginText" autocomplete="off"/>
+        <input type="password" placeholder="password" id="passText" autocomplete="off"/>
+        <button>Sign up</button>
+    </form>
+    <script>
+        async function createUser(event) {
+            const url = "http://localhost:8000/auth/register";
+
+            let login = document.getElementById("loginText").value;
+            let pass = document.getElementById("passText").value;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify({
+                    "email": login,
+                    "password": pass,
+                }),
+                headers: {
+                    "accept": "application/json",
+                    "Content-Type": "application/json"
+                }
+            });
+            event.preventDefault();
+        }
+    </script>
+</body>
+</html>

@@ -26,9 +26,8 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def broadcast(self, message: str, add_to_db: bool):
-        if add_to_db:
-            await self.add_messages_to_database(message)
+    async def broadcast(self, message: str):
+        await self.add_messages_to_database(message)
         for connection in self.active_connections:
             await connection.send_text(message)
 
@@ -64,7 +63,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(f"{client_id}: {data}", add_to_db=True)
+            await manager.broadcast(f"{client_id}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"{client_id} left the chat", add_to_db=False)
+        await manager.broadcast(f"{client_id} left the chat")
