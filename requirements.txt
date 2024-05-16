@@ -1,12 +1,10 @@
-fastapi==0.111.0
-pydantic==2.7.1
-sqlalchemy
-alembic
-psycopg2-binary
-fastapi-users[sqlalchemy]
-python-dotenv
+alembic~=1.13.1
 asyncpg
-websocket
-redis
-aiohttp
-<img src="{{ url_for('static', path='night_chat.gif') }}">
+python-dotenv~=1.0.1
+fastapi-users[sqlalchemy]
+fastapi~=0.111.0
+SQLAlchemy~=2.0.30
+pydantic~=2.7.1
+#python-jose[cryptography]
+#passlib[encrypt]
+#python-multipart

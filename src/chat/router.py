@@ -26,14 +26,15 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
     async def broadcast(self, message: str, add_to_db: bool):
         if add_to_db:
             await self.add_messages_to_database(message)
         for connection in self.active_connections:
             await connection.send_text(message)
+
+    @staticmethod
+    async def send_personal_message(message: str, websocket: WebSocket):
+        await websocket.send_text(message)
 
     @staticmethod
     async def add_messages_to_database(message: str):
@@ -52,7 +53,7 @@ manager = ConnectionManager()
 async def get_last_messages(
         session: AsyncSession = Depends(get_async_session),
 ) -> List[MessagesModel]:
-    query = select(Messages).order_by(Messages.id.desc()).limit(5)
+    query = select(Messages).order_by(Messages.id.asc())
     messages = await session.execute(query)
     return messages.scalars().all()
 
@@ -63,7 +64,7 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.broadcast(f"Client #{client_id} says: {data}", add_to_db=True)
+            await manager.broadcast(f"{client_id}: {data}", add_to_db=True)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat", add_to_db=False)
+        await manager.broadcast(f"{client_id} left the chat", add_to_db=False)

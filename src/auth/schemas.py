@@ -9,7 +9,7 @@ class UserRead(schemas.BaseUser[int]):
     username: str
     is_active: bool = True
     is_superuser: bool = False
-    is_verified:bool = False
+    is_verified: bool = False
 
     class Config:
         orm_mode = True
@@ -17,7 +17,7 @@ class UserRead(schemas.BaseUser[int]):
 
 class UserCreate(schemas.BaseUserCreate):
     username: str
-    email: str
+    email: Optional[str]
     password: str
     is_active: Optional[bool] = True
     is_superuser: Optional[bool] = False
