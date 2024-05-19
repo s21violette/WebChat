@@ -13,6 +13,7 @@ app = FastAPI(
     title="test"
 )
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,11 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-origins = [
-    "http://localhost:8000/chat/last_messages",
-]
-
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

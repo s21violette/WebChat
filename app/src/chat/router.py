@@ -48,15 +48,6 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-# TODO попробовать сделать по аналогии с get_last_messages
-@router.post("/")
-async def login(request: Request):
-    body = await request.json()
-    login = body["login"]
-    password = body["password"]
-
-
-
 @router.get("/last_messages")
 async def get_last_messages(
         session: AsyncSession = Depends(get_async_session),
@@ -75,16 +66,3 @@ async def websocket_endpoint(websocket: WebSocket, login: str):
             await manager.broadcast(f"{login}: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"{login} left the chat")
-
-
-@router.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await manager.broadcast(f"{client_id}: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"{client_id} left the chat")

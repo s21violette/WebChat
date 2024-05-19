@@ -1,7 +1,4 @@
 # WebChat
-## WIP
+Веб чат с возможностью авторизации
 
-alembic revision --autogenerate -m "init migration"
-alembic upgrade head
-cd src
-uvicorn main:app --reload
+## WIP
