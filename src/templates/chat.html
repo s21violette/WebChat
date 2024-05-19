@@ -10,10 +10,10 @@
 <body>
     <nav class="flex justify-between text-3xl my-3">
         <ul class="flex ml-10">
-            <li>Ночной чат</li>
+            <li>Night chat</li>
         </ul>
         <ul class="flex gap-5 mr-10">
-            <li>Выйти</li>
+            <li><button onclick="logout(event)">Logout</button></li>
         </ul>
     </nav>
     <hr>
@@ -28,6 +28,17 @@
     </div>
 
     <script>
+        async function logout(event) {
+            url = "http://127.0.0.1:8000/auth/logout";
+            event.preventDefault();
+            await fetch(url, {
+                method: "POST",
+                headers: {
+                    "accept": "application/json"
+                }
+            });
+        }
+
         async function getLastMessages() {
             const url = 'http://localhost:8000/chat/last_messages'
             const response = await fetch(url, {
@@ -51,12 +62,12 @@
             messages.appendChild(message)
         }
 
-        let client_id = Date.now()
-        document.querySelector("#ws-id").textContent = client_id;
-        let ws = new WebSocket(`ws://localhost:8000/chat/ws/${client_id}`);
-        ws.onmessage = function (event) {
-            appendMessage(event.data)
-        };
+<!--        let client_id = Date.now()-->
+<!--        document.querySelector("#ws-id").textContent = client_id;-->
+<!--        let ws = new WebSocket(`ws://localhost:8000/chat/ws/${client_id}`);-->
+<!--        ws.onmessage = function (event) {-->
+<!--            appendMessage(event.data)-->
+<!--        };-->
 
         function sendMessage(event) {
             let input = document.getElementById("messageText")

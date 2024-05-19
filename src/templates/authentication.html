@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+        }
+
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          -webkit-transition: .4s;
+          transition: .4s;
+        }
+
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+          box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+          -webkit-transform: translateX(26px);
+          -ms-transform: translateX(26px);
+          transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+          border-radius: 34px;
+        }
+
+        .slider.round:before {
+          border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div align="center">
+    <div class="flex flex-col items-center">
+        Sign up
+        <label class="switch">
+            <input type="checkbox" name="isSignIn" id="isSignIn">
+            <span class="slider round"></span>
+        </label>
+        Sign in
+
+        <br>
+        <br>
+        <form action="" onsubmit="auth(event)">
+            <input type="text" placeholder="login" id="loginText" autocomplete="off"/>
+            <input type="password" placeholder="password" id="passText" autocomplete="off"/>
+            <button>OK</button>
+        </form>
+    </div>
+        <script>
+            async function signIn(login, pass) {
+                url = "http://localhost:8000/auth/login";
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: `grant_type=&username=${login}&password=${pass}&scope=&client_id=&client_secret=`,
+                    headers: {
+                        "accept": "application/json",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    }
+                });
+                if (response.ok) {
+<!--                    let ws = new WebSocket(`ws://localhost:8000/chat/ws/${login}`);-->
+                    // window.location.replace("http://127.0.0.1:8000/chat");
+                    await fetch()
+                } else {
+                    alert("User with such login and password doesn't exist!");
+                }
+            }
+
+            async function signUp(login, pass) {
+                url = "http://localhost:8000/auth/register";
+                body_content = JSON.stringify({
+                    "email": login,
+                    "password": pass,
+                })
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: body_content,
+                    headers: {
+                        "accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                });
+                if (response.ok) {
+                    alert("New user has been registered!");
+                }
+            }
+
+            async function auth(event) {
+                let login = document.getElementById("loginText").value;
+                let pass = document.getElementById("passText").value;
+
+                event.preventDefault()
+                if (document.getElementById('isSignIn').checked) {
+                    signIn(login, pass)
+                } else {
+                    signUp(login, pass)
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

@@ -16,4 +16,4 @@ def get_chat_page(request: Request):
 
 @router.get("/auth")
 def get_auth_page(request: Request):
-    return templates.TemplateResponse("auth/authentication.html", {"request": request})
+    return templates.TemplateResponse("authentication.html", {"request": request})

@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Request
 
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -48,6 +48,15 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+# TODO попробовать сделать по аналогии с get_last_messages
+@router.post("/")
+async def login(request: Request):
+    body = await request.json()
+    login = body["login"]
+    password = body["password"]
+
+
+
 @router.get("/last_messages")
 async def get_last_messages(
         session: AsyncSession = Depends(get_async_session),
@@ -55,6 +64,18 @@ async def get_last_messages(
     query = select(Messages).order_by(Messages.id.asc())
     messages = await session.execute(query)
     return messages.scalars().all()
+
+
+@router.websocket("/ws/{login}")
+async def websocket_endpoint(websocket: WebSocket, login: str):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await manager.broadcast(f"{login}: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+        await manager.broadcast(f"{login} left the chat")
 
 
 @router.websocket("/ws/{client_id}")
