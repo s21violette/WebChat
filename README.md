@@ -4,7 +4,7 @@
 Чтобы запустить приложение, нужно в .env заполнить информацию о существующей базе данных (или на основе той, 
 что там есть, создать новую) зайти в директорию app/ и прописать команду:
 ```bash
-alembic revision --autogenerate -m "Add messages model"; alembic upgrade head
+alembic revision --autogenerate -m "Init migration"; alembic upgrade head
 ```
 Это инициирует и запустит нужные миграции для создания таблиц.
 
