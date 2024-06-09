@@ -1,33 +1,22 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 
 from services.auth import AuthService
 from schemas.auth import Token, UserSchema
+from core.oauth2_scheme import oauth2_scheme
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/auth/token")
 
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                                  auth_service: AuthService = Depends()) -> Token:
-    token = await auth_service.get_token(form_data=form_data)
-
-    return token
+    return await auth_service.get_token(form_data=form_data)
 
 
 @router.get("/users/me/", response_model=UserSchema)
 async def read_users_me(token: str = Depends(oauth2_scheme), auth_service: AuthService = Depends()) -> UserSchema:
-    current_user = await auth_service.get_current_user(token=token)
-
-    return current_user
-
-
-@router.get("/users/me/items/")
-async def read_own_items(token: str = Depends(oauth2_scheme), auth_service: AuthService = Depends()):
-    current_user = await auth_service.get_current_user(token=token)
-
-    return [{"item_id": "Foo", "owner": current_user.username}]
+    return await auth_service.get_current_user(token=token)
 
 
 @router.post("/register")

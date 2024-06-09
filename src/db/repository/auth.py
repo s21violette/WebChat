@@ -18,7 +18,7 @@ class AuthRepository(BaseDatabaseRepository):
         except ConnectionRefusedError:
             raise lost_connection_exception
 
-        return UserSchema.validate(jsonable_encoder(model_result))
+        return UserSchema.model_validate(jsonable_encoder(model_result))
 
     async def register_user(self, username: str, hashed_password: str):
         try:
