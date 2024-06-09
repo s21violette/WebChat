@@ -1,10 +1,10 @@
-from sqlalchemy import select, insert, exc
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import exc, insert, select
 
-from db.repository.base import BaseDatabaseRepository
+from core.exceptions import credentials_exception, insert_user_exception, lost_connection_exception
 from db.models.user import User
+from db.repository.base import BaseDatabaseRepository
 from schemas.auth import UserSchema
-from core.exceptions import insert_user_exception, lost_connection_exception, credentials_exception
 
 
 class AuthRepository(BaseDatabaseRepository):

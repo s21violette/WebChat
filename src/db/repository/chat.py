@@ -1,10 +1,10 @@
 from typing import Sequence
 
-from sqlalchemy import select, insert
+from sqlalchemy import insert, select
 
 from core.exceptions import lost_connection_exception
-from db.repository.base import BaseDatabaseRepository
 from db.models.chat import Message
+from db.repository.base import BaseDatabaseRepository
 from schemas.chat import MessageSchema
 
 
