@@ -1,21 +1,37 @@
-# WebChat
-Веб чат с возможностью авторизации
+# pvr-map
 
-Чтобы запустить приложение, нужно в .env заполнить информацию о существующей базе данных (или на основе той, 
-что там есть, создать новую) зайти в директорию app/ и прописать команду:
-```bash
-alembic revision --autogenerate -m "Init migration"; alembic upgrade head
+Клонирование репозитория:
+``` Bash
+git clone -c http.sslVerify=false https://gitlab.bdd/grade/its-grade.git
 ```
-Это инициирует и запустит нужные миграции для создания таблиц.
 
-Далее зайти в src/ и ввести следующую команду:
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+## Создание окружения    
+Установка poetry и необходимых пакетов:
+``` Bash
+pip install poetry
+
+cd .\src\
+poetry install
 ```
-Это запустит сам сервис по адресу 0.0.0.0 на 8000 порту. Чтобы открыть 
-окно регистрации, зайдите в интернет по адресу 0.0.0.0:8000/auth. 
-Там после регистрации нового пользователя и авторизации вас
-перенесет на окно самого чата.
 
-## TODO
-Разобраться, почему в докере не узнает хоста бд
+Параметры БД находятся в ```src/core/config.py```   
+
+Применение миграций:
+``` Bash
+poetry run alembic upgrade head
+```
+
+Локальный запуск сервиса:
+``` Bash
+poetry run py main.py
+```
+
+## Прекоммит:
+``` Bash
+poetry run ruff --fix
+poetry run ruff format
+poetry run mypy .
+```
+
+alembic revision --autogenerate -m 'init'
+docker compose -f .\docker-compose.chat.yaml up --build -d

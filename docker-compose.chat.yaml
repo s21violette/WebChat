@@ -1,0 +1,47 @@
+version: "3.9"
+
+services:
+#  chat:
+#    container_name: web-chat
+#    restart: on-failure
+#    build:
+#      context: ./src
+#    working_dir: /usr/grade/src
+#    command: bash -c "
+#        alembic upgrade head &&
+#        python main.py
+#      "
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - chat-db
+#    healthcheck:
+#      test: curl -f http://localhost:8000/api/healthcheck/
+#      interval: 60s
+#      timeout: 3s
+#      retries: 3
+
+  chat-db:
+    image: postgres:16
+    container_name: web-chat-db
+    restart: on-failure
+    command: -p 5632
+    environment:
+      - POSTGRES_USER=web-chat-db
+      - POSTGRES_PASSWORD=web-chat-db
+      - POSTGRES_DB=web-chat-db
+    expose:
+      - "5632"
+    ports:
+      - "5632:5632"
+    volumes:
+      - chat-db-data:/var/lib/postgresql/data/
+    healthcheck:
+      test: pg_isready -p 5432 -U web-chat-db -d web-chat-db
+      interval: 60s
+      timeout: 3s
+      retries: 3
+
+
+volumes:
+  chat-db-data:
