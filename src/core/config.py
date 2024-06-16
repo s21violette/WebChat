@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     SERVER_HOST: str = "0.0.0.0"
     SERVER_PORT: int = 8000
 
+    SECRET_KEY: str = "qQSowk9QjUzQwUiQMWeGdha9yJX-YDEvVU-YJx_zJmI"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     ENVIRONMENT: str = "local"
     CORS_ALLOW_ORIGIN_LIST: str = "*"
 

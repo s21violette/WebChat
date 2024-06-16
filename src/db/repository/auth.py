@@ -1,7 +1,8 @@
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import exc, insert, select
 
-from core.exceptions import credentials_exception, insert_user_exception, lost_connection_exception
+from core.exceptions import credentials_exception, insert_user_exception, lost_connection_exception, \
+    database_initialization_exception
 from db.models.user import User
 from db.repository.base import BaseDatabaseRepository
 from schemas.auth import UserSchema
@@ -17,6 +18,8 @@ class AuthRepository(BaseDatabaseRepository):
                 raise credentials_exception
         except ConnectionRefusedError:
             raise lost_connection_exception
+        except exc.ProgrammingError:
+            raise database_initialization_exception
 
         return UserSchema.model_validate(jsonable_encoder(model_result))
 
@@ -29,3 +32,5 @@ class AuthRepository(BaseDatabaseRepository):
             raise insert_user_exception
         except ConnectionRefusedError:
             raise lost_connection_exception
+        except exc.ProgrammingError:
+            raise database_initialization_exception

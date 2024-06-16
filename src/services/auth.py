@@ -2,18 +2,13 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 
 from core.exceptions import credentials_exception
+from core.config import settings
 from db.repository.auth import AuthRepository
 from schemas.auth import Token
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="v1/auth/token")
-
-SECRET_KEY = "qQSowk9QjUzQwUiQMWeGdha9yJX-YDEvVU-YJx_zJmI"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 class AuthService:
@@ -29,7 +24,7 @@ class AuthService:
         else:
             expire = datetime.now(timezone.utc) + timedelta(minutes=15)
         to_encode.update({"exp": str(expire)})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, settings().SECRET_KEY, algorithm=settings().ALGORITHM)
         return encoded_jwt
 
     def verify_password(self, plain_password, hashed_password) -> bool:
@@ -38,12 +33,12 @@ class AuthService:
     async def get_token(self, form_data: OAuth2PasswordRequestForm) -> Token:
         user = await self._auth_repository.get_user(form_data.username)
         if (
-            not self.verify_password(plain_password=form_data.password, hashed_password=user.hashed_password)
-            or not user
+            not user
+            or not self.verify_password(plain_password=form_data.password, hashed_password=user.hashed_password)
         ):
             raise credentials_exception
 
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token_expires = timedelta(minutes=settings().ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = self.create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 
         return Token(access_token=access_token, token_type="bearer")
