@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     KEYCLOAK_EXCLUDED_ROUTES: list[str] = ["/api/openapi.json", "/api/swagger", "/api/healthcheck"]
 
     POSTGRES_HOST: str = "localhost"
-    POSTGRES_PORT: int = 5632
+    POSTGRES_PORT: int = 5434
     POSTGRES_USER: str = "web-chat-db"
     POSTGRES_PASSWORD: str = "web-chat-db"
     POSTGRES_DB: str = "web-chat-db"

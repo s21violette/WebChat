@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from core.oauth2_scheme import oauth2_scheme
 from schemas.chat import MessageSchema
@@ -10,8 +10,8 @@ router = APIRouter(prefix="/chat", tags=["Authentication"], dependencies=[Depend
 
 
 @router.post("/send_message")
-async def send_message(text: str, chat_service: ChatService = Depends()) -> MessageSchema:
-    return await chat_service.send_message(text=text)
+async def send_message(request: Request, text: str, chat_service: ChatService = Depends()):
+    await chat_service.send_message(text=text, request=request)
 
 
 @router.get("/get_messages")

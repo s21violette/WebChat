@@ -19,12 +19,10 @@ class ChatRepository(BaseDatabaseRepository):
 
         return [MessageSchema(text=message) for message in messages_list]
 
-    async def send_message(self, text: str) -> MessageSchema:
+    async def send_message(self, text: str):
         try:
             query = insert(Message).values(text=text)
             await self._session.execute(query)
             await self._session.commit()
         except ConnectionRefusedError:
             raise lost_connection_exception
-
-        return MessageSchema(text=text)
